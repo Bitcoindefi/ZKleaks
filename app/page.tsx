@@ -1,17 +1,26 @@
 import { DonationCard } from "@/components/donation-card"
 import { LeakComposer } from "@/components/leak-composer"
 import { PostsList } from "@/components/posts-list"
+import Image from "next/image"
 
 export default function ZKLeaksApp() {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <header className="text-center mb-16 animate-fade-in">
-          <div className="inline-flex items-center gap-3 mb-6">
-            <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse" />
-            <h1 className="text-5xl font-bold gradient-text">ZKLeaks</h1>
-            <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse" />
+          <div className="flex flex-col items-center gap-6 mb-8">
+            <div className="relative">
+              <Image
+                src="/images/zkleaks-logo.png"
+                alt="ZKLeaks Logo"
+                width={200}
+                height={200}
+                className="pixelated hover:scale-105 transition-transform duration-300"
+                priority
+              />
+            </div>
           </div>
+
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Secure, anonymous whistleblowing platform powered by{" "}
             <span className="font-semibold text-blue-600 dark:text-blue-400">Midnight blockchain</span> and{" "}

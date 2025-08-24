@@ -2,11 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { QRCodeSVG } from "qrcode.react"
-import { Copy, Check, QrCode, ShieldQuestion, RefreshCw } from "lucide-react"
+import { Copy, Check, QrCode, ShieldQuestion, RefreshCw, TestTube } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { STABLECOINS, DEFAULT_DONATION_WALLET, buildMidnightURI, isLikelyMidnightAddress } from "@/lib/midnight"
+import {
+  STABLECOINS,
+  DEFAULT_DONATION_WALLET,
+  buildMidnightURI,
+  isLikelyMidnightAddress,
+  NETWORK_CONFIG,
+} from "@/lib/midnight"
 import type { AddressAnalysis } from "@/types"
 
 const ANALYZE_ADDR_ENDPOINT = "/api/midnight/analyze-address"
@@ -77,6 +83,12 @@ export function DonationCard() {
           <span className="flex items-center gap-3">
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
             Support ZKLeaks ({selected.symbol})
+            {NETWORK_CONFIG.isTestnet && (
+              <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 rounded-full">
+                <TestTube className="w-3 h-3" />
+                TESTNET
+              </span>
+            )}
           </span>
           <Button
             variant="outline"
@@ -88,6 +100,15 @@ export function DonationCard() {
             {showQR ? "Hide QR" : "Show QR"}
           </Button>
         </CardTitle>
+        {NETWORK_CONFIG.isTestnet && (
+          <div className="mt-2 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+            <div className="flex items-center gap-2 text-sm text-orange-800 dark:text-orange-200">
+              <TestTube className="w-4 h-4" />
+              <span className="font-medium">Testnet Mode:</span>
+              <span>This is for testing only. No real funds will be transferred.</span>
+            </div>
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-6">
@@ -95,14 +116,14 @@ export function DonationCard() {
           {/* Recipient Address */}
           <div className="md:col-span-2">
             <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
-              Recipient Address
+              Recipient Address {NETWORK_CONFIG.isTestnet && <span className="text-orange-600">(Testnet)</span>}
             </label>
             <div className="flex flex-wrap items-center gap-2">
               <Input
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
                 className="font-mono text-sm flex-1 min-w-0"
-                placeholder="midnight1..."
+                placeholder={NETWORK_CONFIG.isTestnet ? "addr_test1..." : "midnight1..."}
               />
               <Button variant="secondary" size="sm" onClick={onCopy} className="gap-2 shrink-0">
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
@@ -141,7 +162,7 @@ export function DonationCard() {
           {/* Amount */}
           <div>
             <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
-              Amount ({selected.symbol})
+              Amount ({selected.symbol}) {NETWORK_CONFIG.isTestnet && <span className="text-orange-600">(Test)</span>}
             </label>
             <Input
               type="text"
@@ -167,7 +188,9 @@ export function DonationCard() {
 
           {/* Token Selection */}
           <div>
-            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">Token</label>
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+              Token {NETWORK_CONFIG.isTestnet && <span className="text-orange-600">(Testnet)</span>}
+            </label>
             <select
               className="w-full border border-slate-300 dark:border-slate-600 rounded-md p-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
               value={token}
@@ -191,6 +214,7 @@ export function DonationCard() {
             />
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Notes are for display only and don't go on-chain.
+              {NETWORK_CONFIG.isTestnet && " • Testnet transactions only."}
             </p>
           </div>
         </div>
@@ -210,7 +234,9 @@ export function DonationCard() {
                   <a href={paymentURI} className="text-xs text-blue-600 dark:text-blue-400 hover:underline break-all">
                     {paymentURI}
                   </a>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">Scan with your Midnight wallet</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-2">
+                    Scan with your {NETWORK_CONFIG.isTestnet ? "testnet " : ""}Midnight wallet
+                  </p>
                 </div>
               </div>
             ) : (
